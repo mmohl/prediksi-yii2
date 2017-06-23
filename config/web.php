@@ -6,6 +6,7 @@ $db = require(__DIR__ . '/db.php');
 $config = [
     'id' => 'prediksi',
     'name' => 'prediksi',
+    'language' => 'id',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'layout' => '@app/views/layouts/lightbootstrap/main',
