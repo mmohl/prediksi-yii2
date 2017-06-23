@@ -25,6 +25,7 @@ class m170623_013756_create_table_user extends Migration {
             'img' => $this->string(50)->null(), // varchar(50) NOT NULL,
             'username' => $this->string(20)->notNull(), // varchar(20) NOT NULL,
             'password' => $this->string(255)->notNull(), // varchar(255) NOT NULL,
+            'isActive' => $this->char(1)->defaultValue('1')
         ]);
     }
 
