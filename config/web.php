@@ -47,14 +47,14 @@ $config = [
             ],
         ],
         'db' => $db,
-    /*
-      'urlManager' => [
-      'enablePrettyUrl' => true,
-      'showScriptName' => false,
-      'rules' => [
-      ],
-      ],
-     */
+        'urlManager' => [
+            'class' => 'yii\web\UrlManager',
+            'enablePrettyUrl' => true,
+            'showScriptName' => false,
+            'rules' => [
+                '<alias:\w+>' => 'site/<alias>',
+            ],
+        ],
     ],
     'params' => $params,
 ];
