@@ -1,6 +1,6 @@
 {
-    "name": "yiisoft/yii2-app-basic",
-    "description": "Yii 2 Basic Project Template",
+    "name": "prediksi",
+    "description": "aplikasi prediksi menggunakan php framework yii versi 2",
     "keywords": ["yii2", "framework", "basic", "project template"],
     "homepage": "http://www.yiiframework.com/",
     "type": "project",
@@ -17,7 +17,11 @@
         "php": ">=5.4.0",
         "yiisoft/yii2": "~2.0.5",
         "yiisoft/yii2-bootstrap": "~2.0.0",
-        "yiisoft/yii2-swiftmailer": "~2.0.0"
+        "yiisoft/yii2-swiftmailer": "~2.0.0",
+        "spinx/sidekiq-job-php": "0.2.0",
+        "doctrine/cache": "^1.6",
+        "2amigos/yii2-chartjs-widget": "^2.0",
+        "faisalman/simple-excel-php": "^0.3.15"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",
@@ -30,7 +34,7 @@
     },
     "config": {
         "process-timeout": 1800,
-        "fxp-asset":{
+        "fxp-asset": {
             "installer-paths": {
                 "npm-asset-library": "vendor/npm",
                 "bower-asset-library": "vendor/bower"
