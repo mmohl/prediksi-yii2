@@ -16,7 +16,9 @@ class m170623_010335_create_penjualan_table extends Migration {
             'id_teknik' => $this->integer(11),
             'tahun' => $this->char(10)->notNull(), // char(10) NOT NULL,
             'bulan' => $this->char(50)->notNull(), // char(50) NOT NULL,
-            'jumlah' => $this->integer(4)->null() // int(4) NOT NULL
+            'jumlah' => $this->integer(4)->null(), // int(4) NOT NULL
+            'created_at' => $this->integer(11)->notNull(),
+            'updated_at' => $this->integer(11)->notNull(),
         ]);
     }
 

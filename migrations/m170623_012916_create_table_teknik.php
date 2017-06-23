@@ -24,6 +24,8 @@ class m170623_012916_create_table_teknik extends Migration {
             'nama_teknik' => $this->string(100)->notNull(), // varchar(100) NOT NULL,
             'parent' => $this->integer(10)->unsigned()->notNull(), // int(10) unsigned NOT NULL,
             'kode' => $this->char(5)->notNull(), // char(5) NOT NULL
+            'created_at' => $this->integer(11)->notNull(),
+            'updated_at' => $this->integer(11)->notNull(),
         ]);
     }
 
