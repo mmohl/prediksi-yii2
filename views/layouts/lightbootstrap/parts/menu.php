@@ -34,14 +34,14 @@ use yii\helpers\Url;
     </div>
 
     <ul class="nav">
-        <li class="active">
+        <li>
             <a href="<?= Url::to(['/site']) ?>">
                 <i class="pe-7s-graph"></i>
                 <p>Dashboard</p>
             </a>
         </li>
         <li>
-            <a href="user.html">
+            <a href="<?= Url::to(['/teknik/index']) ?>">
                 <i class="pe-7s-user"></i>
                 <p>Teknik Penjualan</p>
             </a>
