@@ -26,7 +26,7 @@ $config = [
         ],
         'user' => [
             'identityClass' => 'app\models\User',
-            'enableAutoLogin' => true,
+            'enableAutoLogin' => FALSE,
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',
@@ -36,7 +36,7 @@ $config = [
             // send all mails to a file by default. You have to set
             // 'useFileTransport' to false and configure a transport
             // for the mailer to send real emails.
-            'useFileTransport' => true,
+            'useFileTransport' => TRUE,
         ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
