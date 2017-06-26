@@ -35,7 +35,7 @@ use yii\helpers\Url;
 
     <ul class="nav">
         <li>
-            <a href="<?= Url::to(['/site']) ?>">
+            <a href="<?= Url::to(['/']) ?>">
                 <i class="pe-7s-graph"></i>
                 <p>Dashboard</p>
             </a>

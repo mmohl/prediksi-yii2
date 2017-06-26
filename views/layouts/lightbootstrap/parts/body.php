@@ -28,7 +28,7 @@ use yii\helpers\Url;
 <body>
     <?php $this->beginBody() ?>
     <div class="wrapper">
-        <div class="sidebar" data-color="purple" data-image="<?= Url::to('@web/templates/lightbootstrap/assets/img/sidebar-5.jpg', true) ?>">
+        <div class="sidebar" data-color="red" data-image="<?= Url::to('@web/templates/lightbootstrap/assets/img/sidebar-4.jpg', true) ?>">
             <!-- side menu -->
             <?php include_once 'menu.php'; ?>
         </div>

@@ -24,6 +24,7 @@
  */
 
 use yii\helpers\Html;
+use yii\helpers\Url;
 ?>
 
 <nav class="navbar navbar-default navbar-fixed">
@@ -73,7 +74,7 @@ use yii\helpers\Html;
 
             <ul class="nav navbar-nav navbar-right">
                 <li>
-                    <a href="">
+                    <a href="<?= Url::to(['user/view', 'id' => Yii::$app->user->getId()]) ?>">
                         <p>Account</p>
                     </a>
                 </li>
