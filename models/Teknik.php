@@ -9,7 +9,7 @@ use Yii;
  *
  * @property integer $id
  * @property string $nama_teknik
- * @property integer $parent
+ * @property string $parent
  * @property string $kode
  * @property string $created_at
  * @property string $updated_at
@@ -28,10 +28,11 @@ class Teknik extends Model {
      */
     public function rules() {
         return [
-            [['nama_teknik', 'parent', 'kode'], 'required'],
-            [['parent'], 'integer'],
+            [['nama_teknik'], 'required'],
+            [['parent'], 'string'],
             [['nama_teknik'], 'string', 'max' => 100],
             [['kode'], 'string', 'max' => 5],
+            [['kode', 'nama_teknik'], 'unique']
         ];
     }
 
@@ -47,6 +48,20 @@ class Teknik extends Model {
             'created_at' => Yii::t('app', 'Created'),
             'updated_at' => Yii::t('app', 'Updated')
         ];
+    }
+
+    public function beforeSave($insert) {
+        if ($this->isNewRecord) {
+
+            if (!empty($this->parent)) {
+                $parent = handlers\TeknikHandler::getParent($this->parent);
+                $this->kode = handlers\TeknikHandler::autoCode($parent->nama_teknik);
+
+                $this->parent = $parent->id;
+            }
+        }
+
+        return parent::beforeSave($insert);
     }
 
 }

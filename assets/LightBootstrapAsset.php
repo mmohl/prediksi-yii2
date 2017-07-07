@@ -39,7 +39,7 @@ class LightBootstrapAsset extends AssetBundle {
         'templates/lightbootstrap/assets/css/pe-icon-7-stroke.css'
     ];
     public $js = [
-        'templates/lightbootstrap/assets/js/jquery-1.10.2.js',
+//        'templates/lightbootstrap/assets/js/jquery-1.10.2.js',
         'templates/lightbootstrap/assets/js/bootstrap.min.js',
         'templates/lightbootstrap/assets/js/bootstrap-checkbox-radio-switch.js',
         'templates/lightbootstrap/assets/js/bootstrap-notify.js',

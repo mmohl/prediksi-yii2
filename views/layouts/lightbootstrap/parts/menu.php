@@ -47,25 +47,25 @@ use yii\helpers\Url;
             </a>
         </li>
         <li>
-            <a href="table.html">
+            <a href="<?= Url::to(['/penjualan/import']) ?>">
                 <i class="pe-7s-note2"></i>
                 <p>Import Data</p>
             </a>
         </li>
         <li>
-            <a href="typography.html">
+            <a href="<?= Url::to(['/penjualan/index']) ?>">
                 <i class="pe-7s-news-paper"></i>
                 <p>Data Penjualan</p>
             </a>
         </li>
         <li>
-            <a href="icons.html">
+            <a href="<?= Url::to(['/penjualan/prediction']) ?>">
                 <i class="pe-7s-science"></i>
                 <p>Prediksi Penjualan</p>
             </a>
         </li>
         <li>
-            <a href="maps.html">
+            <a href="<?= Url::to(['/penjualan/chart']) ?>">
                 <i class="pe-7s-map-marker"></i>
                 <p>Grafik</p>
             </a>

@@ -22,7 +22,7 @@ class m170623_012916_create_table_teknik extends Migration {
         $this->createTable('teknik_penjualan', [
             'id' => $this->primaryKey()->unsigned(),
             'nama_teknik' => $this->string(100)->notNull(), // varchar(100) NOT NULL,
-            'parent' => $this->integer(10)->unsigned()->notNull(), // int(10) unsigned NOT NULL,
+            'parent' => $this->integer(10)->unsigned()->null(), // int(10) unsigned NOT NULL,
             'kode' => $this->char(5)->notNull(), // char(5) NOT NULL
             'created_at' => $this->integer(11)->notNull(),
             'updated_at' => $this->integer(11)->notNull(),

@@ -12,7 +12,9 @@ use yii\widgets\ActiveForm;
         <div class="card">
             <div class="header">
                 <h4 class="title">Form User</h4>
-                <h5 class="label label-danger">Silahkan mendaftar user dan password baru untuk melanjutkan</h5>
+                <?php if ($model->isNewRecord) : ?>
+                    <h5 class="label label-danger category"><?= Yii::t('app', 'Silahkan mendaftar user dan password baru untuk melanjutkan') ?></h5>
+                <?php endif; ?>
             </div>
             <div class="content">
                 <?php $form = ActiveForm::begin(); ?>
