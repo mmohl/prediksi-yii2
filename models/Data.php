@@ -8,8 +8,9 @@
 
 namespace app\models;
 
-use SimpleExcel\SimpleExcel as Excel;
-use yii\helpers\FileHelper as File;
+use yii\web\UploadedFile;
+use kartik\growl\Growl;
+use League\Csv\Reader;
 
 /**
  * Description of Data
@@ -18,12 +19,18 @@ use yii\helpers\FileHelper as File;
  */
 class Data extends \yii\base\Model {
 
+    /**
+     * @var UploadedFile
+     */
     public $excel;
+    private $path = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'uploads';
+    private $filename;
 
     public function rules() {
         return [
             [['excel'], 'required'],
-            [['excel'], 'file', 'extensions' => ['csv']]
+            [['excel', 'path', 'filename'], 'safe'],
+            [['excel'], 'file', 'skipOnEmpty' => false]
         ];
     }
 
@@ -33,17 +40,71 @@ class Data extends \yii\base\Model {
         ];
     }
 
-    public function import($path) {
-        $import = new Excel('CSV');
+    public function import() {
+        $csv = Reader::createFromPath($this->getFullPath());
 
-        $data = $import->convertTo('JSON');
+//        $csv->setDelimiter(',');
 
-        var_dump($data);
-        die;
+        $data = \app\helpers\MyCsv::groups($csv->fetchAll());
+
+        if (\app\helpers\MyCsv::insertToDb($data)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    private function saveFile() {
+    public function upload() {
 
+        $this->filename = $this->excel->baseName . '.' . $this->excel->extension;
+
+        if ($this->validate()) {
+            $this->excel->saveAs($this->getFullPath());
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function getFlash($is) {
+        $options = [
+            'icon' => 'glyphicon glyphicon-ok-sign',
+            'showSeparator' => true,
+            'delay' => 1000,
+            'pluginOptions' => [
+                'showProgressbar' => false,
+                'placement' => [
+                    'from' => 'top',
+                    'align' => 'right',
+                ]
+            ]
+        ];
+
+        $type = $is === true ?
+                [
+            'type' => Growl::TYPE_SUCCESS,
+            'title' => \Yii::t('app', 'Selamat'),
+            'body' => \Yii::t('app', 'File berhasil di import')
+                ] :
+                [
+            'type' => Growl::TYPE_DANGER,
+            'title' => \Yii::t('app', 'Peringatan'),
+            'body' => \Yii::t('app', 'File gagal di import')
+        ];
+
+        return Growl::widget(array_merge($options, $type));
+    }
+
+    public function getPath() {
+        return $this->path;
+    }
+
+    public function getFilename() {
+        return $this->filename;
+    }
+
+    public function getFullPath() {
+        return $this->path . DIRECTORY_SEPARATOR . $this->filename;
     }
 
 }
