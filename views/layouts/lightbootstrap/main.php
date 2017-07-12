@@ -36,6 +36,6 @@ $dir = __DIR__ . DIRECTORY_SEPARATOR . 'parts' . DIRECTORY_SEPARATOR;
     <!-- Head -->
     <?php include_once $dir . 'head.php'; ?>
     <!-- Body -->
-    <?php include_once $dir . 'body.php' ?>;
+    <?php include_once $dir . 'body.php' ?>
 </html>
 <?php $this->endPage() ?>
