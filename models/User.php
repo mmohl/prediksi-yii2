@@ -116,7 +116,6 @@ class User extends Model implements \yii\web\IdentityInterface {
 
     private function securingPassword() {
         $this->password = password_hash($this->password, PASSWORD_DEFAULT);
-//        $this->password = $this->security->generatePasswordHash($this->password);
     }
 
     /**
