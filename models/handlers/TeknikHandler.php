@@ -12,19 +12,35 @@ class TeknikHandler extends \app\models\Teknik {
 
     /**
      *
-     * @param string $name
-     * @param boolean $toJson
-     * @return array
+     * @param type $type
+     * @param type $column
+     * @return type
+     * @throws Exception
      */
-    public static function getParents($name = null, $toJson = false) {
-        $tmp = self::find()->where(['LIKE', 'nama_teknik', $name])->orderBy('nama_teknik')->all();
+    public static function getParents($type = 'object', $column = 'name') {
 
-        if ($toJson) {
-            return array_map(function($parent) {
-                return ['value' => $parent->nama_teknik];
+        $columns = ['name' => 'nama_teknik', 'code' => 'kode', 'id' => 'id'];
+
+        $col = $columns[$column];
+
+        if (empty($col)) {
+            throw new Exception(\Yii::t('app', 'nama kolom tidak tersedia'));
+        }
+
+        $tmp = self::find()->where(['parent' => null])->orderBy($col)->all();
+
+        if ($type === 'dropdown') {
+            return array_map(function($parent) use($col) {
+                return ['value' => $parent->{$col}];
             }, $tmp);
-        } else {
+        } elseif ($type === 'array') {
+            return array_map(function($parent) use($col) {
+                return $parent->{$col};
+            }, $tmp);
+        } elseif ($type === 'object') {
             return $tmp;
+        } else {
+            throw new Exception(\Yii::t('app', 'tipe tidak tersedia'));
         }
     }
 
@@ -49,6 +65,27 @@ class TeknikHandler extends \app\models\Teknik {
 
     public static function getLast($id) {
         return self::find()->where(['parent' => $id])->orderBy(['id' => SORT_DESC])->one();
+    }
+
+    public static function getCodes($type = 'object', $custom = '') {
+        $tmp = self::find();
+
+        $column = empty($custom) ? 'kode' : $custom;
+
+        if (!empty($custom)) {
+            $tmp->select([$column]);
+        }
+
+        $codes = $tmp->all();
+
+        if ($type === 'array') {
+            return array_map(function($code) use($column) {
+                return $code->{$column};
+            }, $codes);
+        }
+
+
+        return $codes;
     }
 
 }
