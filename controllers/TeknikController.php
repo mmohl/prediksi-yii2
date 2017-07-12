@@ -118,7 +118,7 @@ class TeknikController extends Controller {
     }
 
     public function actionTeknikParents($q = null) {
-        $parents = \app\models\handlers\TeknikHandler::getParents($q, true);
+        $parents = \app\models\handlers\TeknikHandler::getParents('dropdown', 'name');
 
         echo Json::encode($parents);
     }
