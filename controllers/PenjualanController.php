@@ -3,19 +3,33 @@
 namespace app\controllers;
 
 use app\models\searches\PenjualanSearch;
+use app\models\Data;
+use app\models\Prediksi;
+use yii\web\UploadedFile;
 
 class PenjualanController extends \yii\web\Controller {
 
     public function actionImport() {
-        $model = new \app\models\Data;
+        $model = new Data;
+        $flash = NULL;
 
-        if (\Yii::$app->request->post()) {
-            $model->import('');
+        if (\Yii::$app->request->isPost) {
 
-            return $this->render('import');
+            $model->excel = UploadedFile::getInstance($model, 'excel');
+
+            if ($model->upload()) {
+
+                if ($model->import()) {
+                    $flash = $model->getFlash(true);
+                } else {
+                    $flash = $model->getFlash(false);
+                }
+
+                return $this->render('import', ['model' => (new Data), 'flash' => $flash]);
+            }
         }
 
-        return $this->render('import', ['model' => $model]);
+        return $this->render('import', ['model' => $model, 'flash' => $flash]);
     }
 
     public function actionIndex() {
@@ -29,11 +43,32 @@ class PenjualanController extends \yii\web\Controller {
     }
 
     public function actionPrediction() {
-        return $this->render('prediction');
+        $model = new Prediksi;
+
+        if ($model->load(\Yii::$app->request->post()) && $model->validate()) {
+            $sources = $model->calculate();
+            return $this->render('prediction', [
+                        'model' => $model,
+                        'sources' => $sources,
+                        'headers' => $this->getHeaders($sources[0])
+            ]);
+        }
+
+        return $this->render('prediction', ['model' => $model, 'sources' => null, 'kodes' => null]);
     }
 
     public function actionChart() {
         return $this->render('chart');
+    }
+
+    private function getHeaders($source) {
+        $data = [];
+
+        foreach ($source as $key => $value) {
+            $data[] = $key;
+        }
+
+        return $data;
     }
 
 }
