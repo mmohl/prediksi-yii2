@@ -1,9 +1,12 @@
 <?php
 
-use yii\bootstrap\ActiveForm;
+use yii\widgets\ActiveForm;
 use yii\helpers\Html;
-?>
 
+if (!empty($flash)) {
+    echo $flash;
+}
+?>
 <div class="row">
     <div class="col-lg-8 col-lg-offset-2">
         <div class="card">
@@ -14,7 +17,7 @@ use yii\helpers\Html;
                 <div class="category"><span>File Format .CSV</span></div>
             </div>
             <div class="content">
-                <?php $form = ActiveForm::begin() ?>
+                <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]) ?>
 
                 <?= $form->field($model, 'excel')->fileInput(['class' => 'form-control']) ?>
 
