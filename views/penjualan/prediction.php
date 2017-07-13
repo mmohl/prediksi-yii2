@@ -2,6 +2,15 @@
 
 use yii\bootstrap\ActiveForm;
 use yii\bootstrap\Html;
+
+if (!empty($model)) {
+    $sources = $model->getSources();
+    $headers = $model->getHeaders();
+    $footers = $model->getFooters();
+    $predictions = $model->getPrediction();
+    $next = $model->getNextMonth();
+    $highest = $model->getHighest(true);
+}
 ?>
 
 <div class="card table-full-width table-responsive">
@@ -62,21 +71,48 @@ use yii\bootstrap\Html;
                     <tbody>
                         <tr>
                             <?= Html::tag('td', Yii::t('app', 'Total'), ['colspan' => 2]) ?>
-                            <?php for ($k = 2; $k < count($headers); $k++): ?>
+                            <?php foreach ($footers as $footer): ?>
                                 <td>
-                                    <?php
-                                    $total = 0;
-                                    foreach ($sources as $source) {
-                                        $total = $total + $source[$headers[$k]];
-                                    }
-                                    echo $total;
-                                    ?>
+                                    <?= $footer ?>
                                 </td>
-                            <?php endfor; ?>
+                            <?php endforeach; ?>
                         </tr>
                     </tbody>
                 </table>
             </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="header">
+            <div class="title">
+                <?= $highest['label'] ?> tertinggi, dengan nilai <h5 class="label label-primary"><?= $highest['value'] ?></h5>
+            </div>
+            <div class="category">
+                Hasil Prediksi untuk bulan <?= $next['bulan'] ?> <?= $next['tahun'] ?>
+            </div>
+        </div>
+        <div class="content">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Tahun</th>
+                        <th>Bulan</th>
+                        <?php foreach ($predictions as $key => $value) : ?>
+                            <?= Html::tag('th', $key) ?>
+                        <?php endforeach; ?>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><?= $next['tahun'] ?></td>
+                        <td><?= $next['bulan'] ?></td>
+                        <?php foreach ($predictions as $key => $value) : ?>
+                            <?= Html::tag('td', $value) ?>
+                        <?php endforeach; ?>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 
