@@ -46,29 +46,19 @@ class PenjualanController extends \yii\web\Controller {
         $model = new Prediksi;
 
         if ($model->load(\Yii::$app->request->post()) && $model->validate()) {
-            $sources = $model->calculate();
+
+            $model->calculate();
+
             return $this->render('prediction', [
-                        'model' => $model,
-                        'sources' => $sources,
-                        'headers' => $this->getHeaders($sources[0])
+                        'model' => $model
             ]);
         }
 
-        return $this->render('prediction', ['model' => $model, 'sources' => null, 'kodes' => null]);
+        return $this->render('prediction', ['model' => $model]);
     }
 
     public function actionChart() {
         return $this->render('chart');
-    }
-
-    private function getHeaders($source) {
-        $data = [];
-
-        foreach ($source as $key => $value) {
-            $data[] = $key;
-        }
-
-        return $data;
     }
 
 }
