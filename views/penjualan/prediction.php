@@ -1,9 +1,11 @@
 <?php
+$this->title = Yii::t('app', 'Prediksi');
+$this->params['breadcrumbs'][] = $this->title;
 
 use yii\bootstrap\ActiveForm;
 use yii\bootstrap\Html;
 
-if (!empty($model)) {
+if ($model->getStatus()) {
     $sources = $model->getSources();
     $headers = $model->getHeaders();
     $footers = $model->getFooters();
