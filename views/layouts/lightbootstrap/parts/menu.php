@@ -28,8 +28,8 @@ use yii\helpers\Url;
 
 <div class="sidebar-wrapper">
     <div class="logo">
-        <a href="http://www.creative-tim.com" class="simple-text">
-            Creative Tim
+        <a href="<?= Url::to(['/']) ?>" class="simple-text">
+            <?= Yii::$app->name ?>
         </a>
     </div>
 
