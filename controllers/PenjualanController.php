@@ -58,7 +58,14 @@ class PenjualanController extends \yii\web\Controller {
     }
 
     public function actionChart() {
-        return $this->render('chart');
+        $chart = new \app\models\Chart;
+
+        if (!empty(\Yii::$app->request->get('Chart'))) {
+            $chart->tekniks = [];
+            $chart->load(\Yii::$app->request->get());
+        }
+
+        return $this->render('chart', ['chart' => $chart]);
     }
 
 }
