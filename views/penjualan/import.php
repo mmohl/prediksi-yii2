@@ -3,6 +3,9 @@
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
 
+$this->title = Yii::t('app', 'Import');
+$this->params['breadcrumbs'][] = $this->title;
+
 if (!empty($flash)) {
     echo $flash;
 }
