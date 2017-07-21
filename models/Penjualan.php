@@ -61,7 +61,7 @@ class Penjualan extends Model {
         return $this->index;
     }
 
-    public static function getAllYears($limit = null) {
+    public static function getAllYears($limit = null, $dropdown = false) {
 
         $tmp = Penjualan::find()->select(['tahun'])->distinct();
 
@@ -70,6 +70,15 @@ class Penjualan extends Model {
         }
 
         $years = $tmp->asArray()->all();
+
+        if ($dropdown) {
+            $lists = [];
+            foreach ($years as $year) {
+                $lists[$year['tahun']] = $year['tahun'];
+            }
+
+            return $lists;
+        }
 
         return array_map(function($year) {
             return $year['tahun'];
@@ -91,6 +100,64 @@ class Penjualan extends Model {
             'November',
             'Desember'
         ];
+    }
+
+    public function getTeknik() {
+        return $this->hasOne(Teknik::className(), ['id' => 'id_teknik']);
+    }
+
+    public static function getReport($tekniks = [], $tahun = null) {
+
+        if (empty($tekniks)) {
+            return ['labels' => [], 'datasets' => []];
+        }
+
+        $year = empty($tahun) ? date('Y') : $tahun;
+        $values = [];
+        $labels = array_map(function($month) {
+            return $month['bulan'];
+        }, Penjualan::find()
+                        ->select(['bulan'])
+                        ->where(['tahun' => $year])
+                        ->distinct()
+                        ->asArray()
+                        ->all()
+        );
+
+
+        foreach ($tekniks as $teknik) {
+            $teknik = Teknik::find()->where(['id' => $teknik])->one();
+
+            $data = Penjualan::find()
+                    ->select(['bulan', 'jumlah'])
+                    ->where(['tahun' => $year])
+                    ->andWhere(['id_teknik' => $teknik])
+                    ->asArray()
+                    ->all();
+
+            $values[] = Penjualan::toChartJsFormat($data, $teknik);
+        }
+
+
+        return ['labels' => $labels, 'datasets' => $values];
+    }
+
+    private static function toChartJsFormat(array $source, Teknik $obj) {
+
+        $set = [
+            'label' => $obj->kode,
+            'backgroundColor' => "rgba(" . rand(1, 200) . ", " . rand(1, 200) . ", " . rand(1, 200) . ",0.2)",
+            'borderColor' => "rgba(" . rand(1, 200) . ", " . rand(1, 200) . "," . rand(1, 200) . ",1)",
+            'pointBackgroundColor' => "rgba(179,181,198,1)",
+            'pointBorderColor' => "#fff",
+            'pointHoverBackgroundColor' => "#fff",
+            'pointHoverBorderColor' => "rgba(179,181,198,1)",
+            'data' => array_map(function($month) {
+                        return $month['jumlah'];
+                    }, $source)
+        ];
+
+        return $set;
     }
 
 }

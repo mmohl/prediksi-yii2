@@ -20,6 +20,7 @@ class Prediksi extends \yii\base\Model {
     public $isYear = false;
     public $isOdd;
     private $source;
+    private $isCalculated = false;
 
     public function rules() {
         return [
@@ -41,14 +42,23 @@ class Prediksi extends \yii\base\Model {
         $year = intval(date('Y'));
         $firstYear = Penjualan::find()->orderBy(['tahun' => SORT_ASC])->one();
 
-        if ($this->{$attribute} > ($year + 1)) {
-            $this->addError($attribute, \Yii::t('app', $attribute . " tidak boleh lebih dari " . ($year + 1)));
+        if (empty($firstYear)) {
+            $this->addError($attribute, \Yii::t('app', 'tidak ada data penjualan. silahkan import data.'));
+            return;
+        }
+
+        if ($this->{$attribute} > $year) {
+            $this->addError($attribute, \Yii::t('app', $attribute . " tidak boleh lebih dari " . $year));
         } elseif ($this->{$attribute} < $firstYear->tahun) {
             $this->addError($attribute, \Yii::t('app', $attribute . ' tidak boleh kurang dari ' . $firstYear->tahun));
         }
 //        elseif ($this->{$attribute} == $year) {
 //            $this->addError($attribute, \Yii::t('app', $attribute . ' tidak boleh sama dengan tahun sekarang'));
 //        }
+    }
+
+    public function getStatus() {
+        return $this->isCalculated;
     }
 
     public function calculate() {
@@ -61,6 +71,8 @@ class Prediksi extends \yii\base\Model {
         } else {
             $tmp = $this->isEven($source);
         }
+
+        $this->isCalculated = true;
 
         $this->source = $this->countKwadrat($tmp);
     }

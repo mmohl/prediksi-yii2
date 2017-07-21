@@ -30,7 +30,8 @@ class Data extends \yii\base\Model {
         return [
             [['excel'], 'required'],
             [['excel', 'path', 'filename'], 'safe'],
-            [['excel'], 'file', 'skipOnEmpty' => false]
+            [['excel'], 'file', 'skipOnEmpty' => false],
+            [['excel'], 'checkTeknik'],
         ];
     }
 
@@ -38,6 +39,51 @@ class Data extends \yii\base\Model {
         return [
             'excel' => \Yii::t('app', 'File')
         ];
+    }
+
+    public function checkTeknik($attribute, $params, $validator) {
+        $tekniks = $this->loadTekniks();
+        $tmp = $this->fetchData()->fetchAll()[0];
+        $onFile = [];
+
+        foreach ($tmp as $title) {
+            if (strtolower($title) != 'tahun' && strtolower($title) != 'bulan') {
+                $onFile[] = $title;
+            }
+        }
+
+        asort($onFile);
+
+        $unknowns = [];
+
+        if (empty($tekniks)) {
+            $this->addError($attribute, \Yii::t('app', ucwords('tidak ada teknik di database. silahkan buat teknik terlebih dahulu.')));
+        } else {
+            foreach ($onFile as $title) {
+                if (!in_array($title, $tekniks)) {
+                    $unknowns[] = $title;
+                }
+            }
+
+            if (!empty($unknowns)) {
+                $this->addError($attribute, \Yii::t('app', count($unknowns) . ' teknik tidak diketahui pada file, ' . join(', ', $unknowns)));
+            }
+        }
+    }
+
+    private function loadTekniks() {
+        $data = Teknik::find()->select('kode')->asArray()->all();
+
+        $values = [];
+        foreach ($data as $dat) {
+            $values[] = $dat['kode'];
+        }
+
+        return $values;
+    }
+
+    private function fetchData() {
+        return Reader::createFromPath($this->getFullPath());
     }
 
     public function import() {

@@ -64,4 +64,8 @@ class Teknik extends Model {
         return parent::beforeSave($insert);
     }
 
+    public function getKey() {
+        return $this->hasOne(Teknik::className(), ['id' => 'parent']);
+    }
+
 }

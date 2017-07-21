@@ -88,4 +88,16 @@ class TeknikHandler extends \app\models\Teknik {
         return $codes;
     }
 
+    public static function getChartFormat() {
+        $tmp = self::find()->select(['id', 'kode'])->orderBy(['kode' => SORT_ASC])->asArray()->all();
+
+        $data = [];
+
+        foreach ($tmp as $row) {
+            $data[$row['id']] = $row['kode'];
+        }
+
+        return $data;
+    }
+
 }
