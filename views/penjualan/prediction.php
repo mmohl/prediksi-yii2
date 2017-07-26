@@ -1,17 +1,16 @@
 <?php
-$this->title = Yii::t('app', 'Prediksi');
-$this->params['breadcrumbs'][] = $this->title;
 
 use yii\bootstrap\ActiveForm;
 use yii\bootstrap\Html;
+
+$this->title = Yii::t('app', 'Prediksi');
+$this->params['breadcrumbs'][] = $this->title;
 
 if ($model->getStatus()) {
     $sources = $model->getSources();
     $headers = $model->getHeaders();
     $footers = $model->getFooters();
     $predictions = $model->getPrediction();
-    $next = $model->getNextMonth();
-    $highest = $model->getHighest(true);
 }
 ?>
 
@@ -38,10 +37,9 @@ if ($model->getStatus()) {
                 </div>
                 <?php ActiveForm::end() ?>
             </div>
-
         </div>
     </div>
-    <?php if (!empty($sources) && !empty($headers)): ?>
+    <?php if ($model->getStatus()): ?>
         <div class="panel">
             <div class="panel-heading">
                 <table class="table table-bordered table-condensed">
@@ -66,7 +64,6 @@ if ($model->getStatus()) {
                         <?php endforeach; ?>
                     </tbody>
                 </table>
-
             </div>
             <div class="panel-footer">
                 <table class="table table-bordered">
@@ -88,34 +85,34 @@ if ($model->getStatus()) {
     <div class="card">
         <div class="header">
             <div class="title">
-                <?= $highest['label'] ?> tertinggi, dengan nilai <h5 class="label label-primary"><?= $highest['value'] ?></h5>
+                <h3><?= Yii::t('app', 'Prediksi untuk tahun ') . $model->tahun ?></h3>
             </div>
             <div class="category">
-                Hasil Prediksi untuk bulan <?= $next['bulan'] ?> <?= $next['tahun'] ?>
             </div>
         </div>
         <div class="content">
             <table class="table table-bordered">
                 <thead>
                     <tr>
-                        <th>Tahun</th>
                         <th>Bulan</th>
-                        <?php foreach ($predictions as $key => $value) : ?>
+                        <?php foreach ($predictions['januari'] as $key => $value) : ?>
                             <?= Html::tag('th', $key) ?>
                         <?php endforeach; ?>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td><?= $next['tahun'] ?></td>
-                        <td><?= $next['bulan'] ?></td>
-                        <?php foreach ($predictions as $key => $value) : ?>
-                            <?= Html::tag('td', $value) ?>
-                        <?php endforeach; ?>
-                    </tr>
+                    <?php foreach ($predictions as $month => $prediction): ?>
+                        <tr>
+                            <td><?= ucfirst($month) ?></td>
+                            <?php foreach ($prediction as $value): ?>
+                                <td><?= $value ?></td>
+                            <?php endforeach; ?>
+                        </tr>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
     </div>
 
-<?php endif; ?>
+<?php endif;
+?>

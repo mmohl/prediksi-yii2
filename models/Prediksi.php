@@ -187,22 +187,20 @@ class Prediksi extends \yii\base\Model {
         return $data;
     }
 
-    public function getNextMonth() {
+    public function getNextYear() {
         $months = Prediksi::getMonths();
-        $last = end($this->source);
-        $data = null;
+        $x = end($this->source)['x'];
+        $data = [];
 
-        if (strtolower($last['bulan']) === 'desember') {
-            $data['tahun'] = intval($last['tahun']) + 1;
-            $data['bulan'] = 'januari';
-        } else {
-            array_search($months[strtolower($last['bulan'])] + 1, $months);
-        }
+        $i = 0;
+        foreach ($months as $key => $value) {
+            $row = ['bulan' => $key];
 
-        if ($this->isOdd) {
-            $data['x'] = $last['x'] + 1;
-        } else {
-            $data['x'] = $last['x'] + 2;
+            $this->isOdd === true ? $i += 1 : $i += 2;
+
+            $row['x'] = $x + $i;
+
+            $data[] = $row;
         }
 
         return $data;
@@ -231,15 +229,13 @@ class Prediksi extends \yii\base\Model {
     public function getPrediction($order = false) {
         $datas = [];
         $liniers = $this->getLiniers();
-        $next = $this->getNextMonth();
+        $next = $this->getNextYear();
 
-        foreach ($liniers as $key => $values) {
-            $datas[$key] = round($values[1] + ($values[2] * $next['x']));
-        }
-
-        if ($order) {
-            uasort($datas, [$this, 'cmp']);
-            return $datas;
+        foreach ($next as $row) {
+            $datas[$row['bulan']] = [];
+            foreach ($liniers as $key => $values) {
+                $datas[$row['bulan']][$key] = round($values[1] + ($values[2] * $row['x']));
+            }
         }
 
         return $datas;
