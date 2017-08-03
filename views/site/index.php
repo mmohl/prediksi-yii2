@@ -1,9 +1,8 @@
 <?php
-
 /* @var $this yii\web\View */
 
 $this->title = 'Prediksi Penjualan';
-$this->params['breadcrumbs'] []='';
+$this->params['breadcrumbs'][] = '';
 ?>
 <div class="site-index">
 
