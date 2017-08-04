@@ -48,6 +48,7 @@ class User extends Model implements \yii\web\IdentityInterface {
             [['name'], 'string', 'max' => 100],
             [['img'], 'string', 'max' => 50],
             [['username'], 'string', 'max' => 20],
+            [['username'], 'unique'],
             [['password', 'auth_key', 'access_token'], 'string', 'max' => 255],
             [['isActive'], 'string', 'max' => 1],
             [['newPassword', 'verifyNewPassword'], 'string', 'min' => 6, 'max' => 20]
@@ -74,10 +75,28 @@ class User extends Model implements \yii\web\IdentityInterface {
 
     public function beforeSave($insert) {
 
-        $this->securingPassword();
-        $this->generateAuthKey();
+        if ($this->isNewRecord) {
+            $this->securingPassword();
+            $this->generateAuthKey();
+        }
 
         return parent::beforeSave($insert);
+    }
+
+    public function afterSave($insert, $changedAttributes) {
+
+        if ($insert) {
+            if ($this->resetAccount()) {
+                Yii::$app->user->logout();
+            }
+        } else {
+            if ($this->username === 'admin') {
+                Yii::$app->user->logout();
+            }
+        }
+
+
+        parent::afterSave($insert, $changedAttributes);
     }
 
     public function getAuthKey(): string {
@@ -128,14 +147,28 @@ class User extends Model implements \yii\web\IdentityInterface {
         return self::findOne(['username' => $username, 'isActive' => '1']);
     }
 
-    public static function resetAccount($id) {
-        $admin = self::findOne(['username' => 'admin']);
-        $user = self::findOne($id);
+    public static function resetAccount($id = null) {
+        try {
+            $admin = self::findOne(['username' => 'admin']);
 
-        $user->updateAll(['isActive' => 0]);
-        $admin->updateAll(['isActive' => 1]);
+            if (!empty($id)) {
+                $user = User::find()->where(['id' => $id])->one();
 
-        return TRUE;
+                $user->isActive = '0';
+
+                $user->save(false);
+
+                $admin->isActive = '1';
+            } else {
+                $admin->isActive = '0';
+            }
+
+            $admin->save(false);
+
+            return true;
+        } catch (\yii\db\Exception $exc) {
+            return false;
+        }
     }
 
 }
