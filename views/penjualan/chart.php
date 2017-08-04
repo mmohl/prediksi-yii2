@@ -36,8 +36,8 @@ $years = app\models\Penjualan::getAllYears(NULL, TRUE);
                     'theme' => Select2::THEME_BOOTSTRAP,
                     'size' => 'md',
                     'model' => $chart,
-                    'attribute' => 'tekniks',
-                    'data' => $tekniks,
+                    'attribute' => 'tahun',
+                    'data' => $years,
                     'pluginOptions' => [
                         'allowClear' => true
                     ],
@@ -46,7 +46,7 @@ $years = app\models\Penjualan::getAllYears(NULL, TRUE);
                 ?>
             </div>
             <div class="col-lg-5">
-                <?= Html::activeDropDownList($chart, 'tahun', $years, ['class' => 'form-control']) ?>
+                <?= Html::activeDropDownList($chart, 'teknik', $tekniks, ['class' => 'form-control']) ?>
             </div>
             <div class="col-lg-2">
                 <?= Html::submitButton('Cari', ['class' => 'btn btn-primary']) ?>
