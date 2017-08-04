@@ -72,6 +72,7 @@ class Penjualan extends Model {
         $years = $tmp->asArray()->all();
 
         if ($dropdown) {
+
             $lists = [];
             foreach ($years as $year) {
                 $lists[$year['tahun']] = $year['tahun'];
@@ -85,8 +86,9 @@ class Penjualan extends Model {
         }, $years);
     }
 
-    public static function getMonths() {
-        return [
+    public static function getMonths($useIndex = false) {
+
+        $months = [
             'Januari',
             'Februari',
             'Maret',
@@ -100,52 +102,58 @@ class Penjualan extends Model {
             'November',
             'Desember'
         ];
+
+        if ($useIndex) {
+            $tmp = [];
+
+            foreach ($months as $month) {
+                $tmp[$month] = $month;
+            }
+
+            return $tmp;
+        }
+
+        return $months;
     }
 
     public function getTeknik() {
         return $this->hasOne(Teknik::className(), ['id' => 'id_teknik']);
     }
 
-    public static function getReport($tekniks = [], $tahun = null) {
+    public static function getReport($tahun = [], $teknik = null) {
 
-        if (empty($tekniks)) {
+        if (empty($tahun)) {
             return ['labels' => [], 'datasets' => []];
         }
 
-        $year = empty($tahun) ? date('Y') : $tahun;
         $values = [];
-        $labels = array_map(function($month) {
-            return $month['bulan'];
-        }, Penjualan::find()
-                        ->select(['bulan'])
-                        ->where(['tahun' => $year])
-                        ->distinct()
-                        ->asArray()
-                        ->all()
-        );
 
+        /**
+         * Untuk set label di chart
+         */
+        $labels = self::getMonths();
 
-        foreach ($tekniks as $teknik) {
-            $teknik = Teknik::find()->where(['id' => $teknik])->one();
-
+        /**
+         * Loop tahun untuk diambil data dari db
+         */
+        foreach ($tahun as $y) {
             $data = Penjualan::find()
                     ->select(['bulan', 'jumlah'])
-                    ->where(['tahun' => $year])
+                    ->where(['tahun' => $y])
                     ->andWhere(['id_teknik' => $teknik])
                     ->asArray()
                     ->all();
 
-            $values[] = Penjualan::toChartJsFormat($data, $teknik);
+            $values[] = self::toChartJsFormat($data, $y);
         }
-
 
         return ['labels' => $labels, 'datasets' => $values];
     }
 
-    private static function toChartJsFormat(array $source, Teknik $obj) {
+    private static function toChartJsFormat(array $source, $label) {
 
         $set = [
-            'label' => $obj->kode,
+            'label' => $label,
             'backgroundColor' => "rgba(" . rand(1, 200) . ", " . rand(1, 200) . ", " . rand(1, 200) . ",0.2)",
             'borderColor' => "rgba(" . rand(1, 200) . ", " . rand(1, 200) . "," . rand(1, 200) . ",1)",
             'pointBackgroundColor' => "rgba(179,181,198,1)",
