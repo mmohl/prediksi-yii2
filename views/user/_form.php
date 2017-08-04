@@ -17,7 +17,7 @@ use yii\widgets\ActiveForm;
                 <?php endif; ?>
             </div>
             <div class="content">
-                <?php $form = ActiveForm::begin(); ?>
+                <?php $form = ActiveForm::begin(['action' => ['/user/create']]); ?>
 
                 <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
@@ -27,7 +27,7 @@ use yii\widgets\ActiveForm;
 
                 <?= $form->field($model, 'verifyNewPassword')->passwordInput(['maxlength' => true]) ?>
 
-                <?= $form->field($model, 'img')->fileInput(['maxlength' => true]) ?>
+                <?php // $form->field($model, 'img')->fileInput(['maxlength' => true]) ?>
 
 
                 <div class="form-group">
