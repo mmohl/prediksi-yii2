@@ -59,15 +59,15 @@ use app\helpers\Breadcrumb;
 
             <ul class="nav navbar-nav navbar-right">
                 <li>
-                    <a href="<?= Url::to(['user/view', 'id' => Yii::$app->user->getId()]) ?>">
-                        <p>Account</p>
+                    <a class="btn" href="<?= Url::to(['user/view', 'id' => Yii::$app->user->getId()]) ?>">
+                        <?= Yii::t('app', 'Account') ?>
                     </a>
                 </li>
                 <li>
                     <?php
                     echo Html::beginForm(['/site/logout'], 'post');
                     echo Html::submitButton(
-                            'Logout', ['class' => 'btn']
+                            'Logout (' . Yii::$app->user->identity->username . ')', ['class' => 'btn']
                     );
                     echo Html::endForm();
                     ?>
