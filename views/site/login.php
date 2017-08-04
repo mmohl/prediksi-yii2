@@ -23,5 +23,4 @@ $this->title = 'Login';
         </div>
     </div>
     <?php ActiveForm::end(); ?>
-    <?php var_dump($model->errors) ?>
 </div>
