@@ -62,7 +62,7 @@ class UserController extends Controller {
         $model = new User();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['site/index']);
         } else {
             return $this->render('create', [
                         'model' => $model,
@@ -132,12 +132,10 @@ class UserController extends Controller {
 
     public function actionResetAccount($id) {
         if (User::resetAccount($id)) {
-            Yii::$app->user->logout(true);
+            Yii::$app->user->logout();
+
+            return $this->redirect(['site/index']);
         }
-    }
-
-    public function actionRegister() {
-
     }
 
 }
