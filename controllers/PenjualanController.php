@@ -61,7 +61,7 @@ class PenjualanController extends \yii\web\Controller {
         $chart = new \app\models\Chart;
 
         if (!empty(\Yii::$app->request->get('Chart'))) {
-            $chart->tekniks = [];
+            $chart->tahun = [];
             $chart->load(\Yii::$app->request->get());
         }
 
