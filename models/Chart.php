@@ -15,25 +15,25 @@ namespace app\models;
  */
 class Chart extends \yii\base\Model {
 
-    public $tahun = null;
-    public $tekniks = [];
+    public $tahun = [];
+    public $teknik = null;
     private $chart;
 
     public function attributeLabels() {
         return [
             'tahun' => \Yii::t('app', 'Tahun'),
-            'tekniks' => \Yii::t('app', 'Teknik')
+            'teknik' => \Yii::t('app', 'Teknik')
         ];
     }
 
     public function rules() {
         return [
-            [['tahun', 'tekniks'], 'safe']
+            [['tahun', 'teknik'], 'safe']
         ];
     }
 
     public function getChart() {
-        return Penjualan::getReport($this->tekniks, $this->tahun);
+        return Penjualan::getReport($this->tahun, $this->teknik);
     }
 
     public function getLabels() {
