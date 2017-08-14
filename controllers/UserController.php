@@ -123,7 +123,14 @@ class UserController extends Controller {
     public function actionChangePassword($id) {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            $model->password = \Yii::$app->request->post("User")['newPassword'];
+
+            $model->updatePassword();
+//            var_dump($model->password);
+//            die;
+            $model->save(FALSE);
+
             return $this->render('view', ['id' => $id, 'model' => $model]);
         }
 
