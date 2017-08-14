@@ -137,6 +137,10 @@ class User extends Model implements \yii\web\IdentityInterface {
         $this->password = password_hash($this->password, PASSWORD_DEFAULT);
     }
 
+    public function updatePassword() {
+        $this->securingPassword();
+    }
+
     /**
      * Finds user by username
      *
