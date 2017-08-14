@@ -6,6 +6,8 @@
  */
 
 use yii\helpers\Html;
+
+$this->params['breadcrumbs'][] = Yii::t('app', ucwords('ganti passwords'));
 ?>
 
 <div class="row">
@@ -16,19 +18,19 @@ use yii\helpers\Html;
                 <h4 class="title"><?= Yii::t('app', 'Ganti Password') ?></h4>
             </div>
             <div class="content">
-                <form method="POST">
-                    <div class="form-group">
-                        <?= Html::label(Yii::t('app', 'Password Baru')) ?>
-                        <?= Html::activeInput('text', $model, 'newPassword', ['class' => 'form-control']) ?>
-                    </div>
-                    <div class="form-group">
-                        <?= Html::label(Yii::t('app', 'Verifikasi Password Baru')) ?>
-                        <?= Html::activeInput('text', $model, 'verifyNewPassword', ['class' => 'form-control']) ?>
-                    </div>
-                    <div class="form-group">
-                        <?= Html::submitButton('Submit', ['class' => 'btn btn-primary']) ?>
-                    </div>
-                </form>
+                <?= Html::beginForm('', 'POST') ?>
+                <div class="form-group">
+                    <?= Html::label(Yii::t('app', 'Password Baru')) ?>
+                    <?= Html::activeInput('text', $model, 'newPassword', ['class' => 'form-control']) ?>
+                </div>
+                <div class="form-group">
+                    <?= Html::label(Yii::t('app', 'Verifikasi Password Baru')) ?>
+                    <?= Html::activeInput('text', $model, 'verifyNewPassword', ['class' => 'form-control']) ?>
+                </div>
+                <div class="form-group">
+                    <?= Html::submitButton('Submit', ['class' => 'btn btn-primary']) ?>
+                </div>
+                <?= Html::endForm() ?>
             </div>
         </div>
         <!-- End Card -->
