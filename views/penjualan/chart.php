@@ -13,8 +13,6 @@ use yii\widgets\Pjax;
 $this->title = Yii::t('app', 'Laporan');
 $this->params['breadcrumbs'][] = $this->title;
 
-$this->title = ucfirst(Yii::t('app', 'chart'));
-
 $tekniks = \app\models\handlers\TeknikHandler::getChartFormat();
 $years = app\models\Penjualan::getAllYears(NULL, TRUE);
 ?>
@@ -74,6 +72,4 @@ $years = app\models\Penjualan::getAllYears(NULL, TRUE);
     </div>
 </div>
 <?php Pjax::end() ?>
-<!--    </div>
-</div>-->
 
