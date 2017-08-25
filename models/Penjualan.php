@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use app\helpers\MySession as M;
 
 /**
  * This is the model class for table "penjualan".
@@ -71,6 +72,10 @@ class Penjualan extends Model {
 
         $years = $tmp->asArray()->all();
 
+        // menambah tahun yang diprediksi secara manual dengan menambah 1 (satu) di tahun terakhir
+        // dari data penjualan.
+        $years[] = ['tahun' => intval($years[(count($years) - 1)]['tahun']) + 1];
+
         if ($dropdown) {
 
             $lists = [];
@@ -137,14 +142,50 @@ class Penjualan extends Model {
          * Loop tahun untuk diambil data dari db
          */
         foreach ($tahun as $y) {
-            $data = Penjualan::find()
-                    ->select(['bulan', 'jumlah'])
-                    ->where(['tahun' => $y])
-                    ->andWhere(['id_teknik' => $teknik])
-                    ->asArray()
-                    ->all();
+            if ($y !== date('Y')) {
+                $data = Penjualan::find()
+                        ->select(['bulan', 'jumlah'])
+                        ->where(['tahun' => $y])
+                        ->andWhere(['id_teknik' => $teknik])
+                        ->asArray()
+                        ->all();
 
-            $values[] = self::toChartJsFormat($data, $y);
+                $values[] = self::toChartJsFormat($data, $y);
+//
+            }
+        }
+
+        if (in_array(date('Y'), $tahun)) {
+            $predictions = null;
+            $teknik = Teknik::findOne($teknik);
+
+            if (!Yii::$app->session->has(M::getOnePredictionKey())) {
+                $predictions = self::getPrediction(date('Y'));
+
+                Yii::$app->session->set(M::getOnePredictionKey(), $prediction);
+            } else {
+                $predictions = Yii::$app->session->get(M::getOnePredictionKey());
+            }
+
+            $val = [];
+
+            foreach ($predictions as $month => $tekniks) {
+                $tmp = ['bulan' => $month];
+
+                foreach ($tekniks as $tName => $tValue) {
+                    if ($teknik->kode === $tName) {
+
+                        $tmp['jumlah'] = $tValue;
+                        break;
+                    }
+                }
+
+                $val[] = $tmp;
+            }
+
+            $beChart = self::toChartJsFormat($val, date('Y'));
+
+            $values[] = $beChart;
         }
 
         return ['labels' => $labels, 'datasets' => $values];
@@ -161,11 +202,20 @@ class Penjualan extends Model {
             'pointHoverBackgroundColor' => "#fff",
             'pointHoverBorderColor' => "rgba(179,181,198,1)",
             'data' => array_map(function($month) {
-                        return $month['jumlah'];
+                        return intval($month['jumlah']);
                     }, $source)
         ];
 
         return $set;
+    }
+
+    private static function getPrediction($year) {
+        $model = new Prediksi();
+        $model->tahun = $year;
+
+        $model->calculate();
+
+        return $model->getPrediction();
     }
 
 }
