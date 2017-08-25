@@ -42,11 +42,13 @@ class LightBootstrapAsset extends AssetBundle {
         'templates/lightbootstrap/assets/js/bootstrap-checkbox-radio-switch.js',
         'templates/lightbootstrap/assets/js/bootstrap-notify.js',
         'templates/lightbootstrap/assets/js/bootstrap-select.js',
+        'templates/lightbootstrap/assets/js/bootstrap.min.js',
         'templates/lightbootstrap/assets/js/light-bootstrap-dashboard.js',
     ];
     public $depends = [
         'yii\web\YiiAsset',
         'yii\bootstrap\BootstrapAsset',
+//        'yii\web\JqueryAsset'
     ];
 
 }
