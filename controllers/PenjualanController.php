@@ -68,4 +68,8 @@ class PenjualanController extends \yii\web\Controller {
         return $this->render('chart', ['chart' => $chart]);
     }
 
+    public function actionPrediksiError($teknik) {
+
+    }
+
 }
