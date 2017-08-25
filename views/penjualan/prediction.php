@@ -2,15 +2,25 @@
 
 use yii\bootstrap\ActiveForm;
 use yii\bootstrap\Html;
+use yii\widgets\Pjax;
+
+// register scripts and assets in here. Because only used in here.
+$this->registerCssFile('@web/css/penjualan/dataTables.bootstrap.min.css', ['depends' => [yii\bootstrap\BootstrapAsset::className()]]);
+$this->registerJsFile('@web/scripts/penjualan/jquery.dataTables.min.js', ['depends' => [yii\web\JqueryAsset::className()]]);
+$this->registerJsFile('@web/scripts/penjualan/dataTables.bootstrap.min.js', ['depends' => [yii\web\JqueryAsset::className()]]);
+$this->registerJsFile('@web/scripts/penjualan/chart.js', ['depends' => [yii\web\JqueryAsset::className()]]);
 
 $this->title = Yii::t('app', 'Prediksi');
 $this->params['breadcrumbs'][] = $this->title;
 
-if ($model->getStatus()) {
+$status = $model->getStatus();
+if ($status) {
     $sources = $model->getSources();
     $headers = $model->getHeaders();
     $footers = $model->getFooters();
     $predictions = $model->getPrediction();
+    $tekniks = \app\models\handlers\TeknikHandler::getChartFormat();
+    $datas = $model->getMadAndMse();
 }
 ?>
 
@@ -39,7 +49,7 @@ if ($model->getStatus()) {
             </div>
         </div>
     </div>
-    <?php if ($model->getStatus()): ?>
+    <?php if ($status): ?>
         <div class="panel">
             <div class="panel-heading">
                 <table class="table table-bordered table-condensed">
@@ -91,28 +101,27 @@ if ($model->getStatus()) {
             </div>
         </div>
         <div class="content">
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Bulan</th>
-                        <?php foreach ($predictions['januari'] as $key => $value) : ?>
-                            <?= Html::tag('th', $key) ?>
-                        <?php endforeach; ?>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($predictions as $month => $prediction): ?>
-                        <tr>
-                            <td><?= ucfirst($month) ?></td>
-                            <?php foreach ($prediction as $value): ?>
-                                <td><?= $value ?></td>
-                            <?php endforeach; ?>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+            <?php Pjax::begin() ?>
+            <?= Html::beginForm(['/penjualan/prediksi-error'], 'GET', ['data-pjax' => true]) ?>
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label for="">Teknik</label>
+                        <div class="input-group">
+                            <?= Html::dropDownList('teknik', '', $tekniks, ['class' => 'form-control']) ?>
+                            <div class="input-group-btn">
+                                <button class="btn btn-default" type="submit" id="teknik-button">
+                                    <?= Yii::t('app', 'Pilih') ?>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <?= $this->render('_prediction', ['datas' => $datas]) ?>
+            <?= Html::endForm() ?>
+            <?php Pjax::end() ?>
         </div>
-    </div>
 
-<?php endif;
-?>
+    </div>
+<?php endif; ?>
