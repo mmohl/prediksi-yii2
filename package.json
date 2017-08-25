@@ -3,5 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "author": "mmohl <mmohammadl.lpkia@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "datatables": "^1.10.13"
+  }
 }
