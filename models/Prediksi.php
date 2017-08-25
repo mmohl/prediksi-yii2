@@ -8,6 +8,9 @@
 
 namespace app\models;
 
+use Yii;
+use app\helpers\MySession;
+
 /**
  * Description of Prediksi
  *
@@ -19,6 +22,7 @@ class Prediksi extends \yii\base\Model {
     public $tahun;
     public $isYear = false;
     public $isOdd;
+    public $teknik;
     private $source;
     private $isCalculated = false;
 
@@ -52,9 +56,6 @@ class Prediksi extends \yii\base\Model {
         } elseif ($this->{$attribute} < $firstYear->tahun) {
             $this->addError($attribute, \Yii::t('app', $attribute . ' tidak boleh kurang dari ' . $firstYear->tahun));
         }
-//        elseif ($this->{$attribute} == $year) {
-//            $this->addError($attribute, \Yii::t('app', $attribute . ' tidak boleh sama dengan tahun sekarang'));
-//        }
     }
 
     public function getStatus() {
@@ -62,6 +63,7 @@ class Prediksi extends \yii\base\Model {
     }
 
     public function calculate() {
+
         $source = $this->group($this->getSource($this->tahun));
         $tmp = null;
         $this->isOdd = count($source) % 2 == 1 ? true : false;
@@ -226,11 +228,24 @@ class Prediksi extends \yii\base\Model {
         return $datas;
     }
 
-    public function getPrediction($order = false) {
+    /**
+     * Fungsi untuk memanggil data hasil prediksi.
+     * @param boolean $order
+     * @return array
+     */
+    public function getPrediction() {
         $datas = [];
         $liniers = $this->getLiniers();
         $next = $this->getNextYear();
 
+        // Jika prediksi sudah pernah dilakukan untuk tahun mendatang, maka ambil dari session.
+        if (Yii::$app->session->has(MySession::getOnePredictionKey()) && $this->tahun === date('Y')) {
+            return Yii::$app->session->get(MySession::getOnePredictionKey());
+        }
+
+        /**
+         * Menjumlahkan value tiap teknik
+         */
         foreach ($next as $row) {
             $datas[$row['bulan']] = [];
             foreach ($liniers as $key => $values) {
@@ -238,7 +253,57 @@ class Prediksi extends \yii\base\Model {
             }
         }
 
+        /**
+         * Menyimpan hasil prediksi ke session
+         */
+        if ($this->tahun === date('Y')) {
+            MySession::saveToSession(MySession::getOnePredictionKey(), $datas);
+        }
+
         return $datas;
+    }
+
+    public function getMadAndMse() {
+        $teknik = Teknik::findOne(2);
+        $prediction = $this->getPrediction();
+        $lists = [];
+        $totalPenjualan = $this->countSales($this->getSources(), $teknik->kode);
+        $total = [];
+        $included = ['error', 'errorKw', 'selisih'];
+
+        foreach ($prediction as $month => $datas) {
+            $penjualan = $totalPenjualan[$month];
+            $forecase = $datas[$teknik->kode];
+            $error = round($penjualan - $forecase);
+
+            $tmp = [
+                'penjualan' => $penjualan,
+                'forecase' => $forecase,
+                'error' => $error,
+                'errorKw' => pow($error, 2),
+                'selisih' => round(($error / $penjualan) * 100)
+            ];
+
+            $lists[$month] = $tmp;
+        }
+
+        $tmp = $lists;
+
+        foreach ($lists as $lists) {
+            foreach ($lists as $key => $val) {
+                if (in_array($key, $included)) {
+                    array_key_exists($key, $total) ? $total[$key] += $val : $total[$key] = $val;
+                }
+            }
+        }
+
+        $errors = [
+            'mad' => round($total['error'] / 12),
+            'mse' => round($total['errorKw'] / 12),
+            'selisih' => round($total['selisih'] / 12)
+        ];
+
+        return ['prediction' => $tmp, 'total' => $total, 'errorPrediction' => $errors];
     }
 
     public function getHighest($labeled = false) {
@@ -267,13 +332,6 @@ class Prediksi extends \yii\base\Model {
         return min($this->getPrediction());
     }
 
-    private function cmp($a, $b) {
-        if ($a == $b) {
-            return 0;
-        }
-        return ($a < $b) ? -1 : 1;
-    }
-
     private static function getMonths() {
         return [
             'januari' => 1,
@@ -289,6 +347,24 @@ class Prediksi extends \yii\base\Model {
             'november' => 11,
             'desember' => 12
         ];
+    }
+
+    private function countSales($sources, $teknik) {
+        $vals = [];
+        $keys = [];
+
+        foreach ($sources as $source) {
+            $key = strtolower($source['bulan']);
+
+            if (!in_array($source['bulan'], $keys)) {
+                $keys[] = $source['bulan'];
+                $vals[$key] = 0;
+            }
+
+            $vals[$key] += $source[$teknik];
+        }
+
+        return $vals;
     }
 
 }
