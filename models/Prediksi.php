@@ -267,7 +267,7 @@ class Prediksi extends \yii\base\Model {
         $teknik = Teknik::findOne(2);
         $prediction = $this->getPrediction();
         $lists = [];
-        $totalPenjualan = $this->countSales($this->getSources(), $teknik->kode);
+        $totalPenjualan = $this->countSales($this->getSources(), $teknik->kode, intval($this->tahun));
         $total = [];
         $included = ['error', 'errorKw', 'selisih'];
 
@@ -349,19 +349,21 @@ class Prediksi extends \yii\base\Model {
         ];
     }
 
-    private function countSales($sources, $teknik) {
+    private function countSales($sources, $teknik, $year) {
         $vals = [];
         $keys = [];
 
         foreach ($sources as $source) {
             $key = strtolower($source['bulan']);
 
-            if (!in_array($source['bulan'], $keys)) {
-                $keys[] = $source['bulan'];
-                $vals[$key] = 0;
-            }
+            if ($source['tahun'] === $year) {
+                if (!in_array($source['bulan'], $keys)) {
+                    $keys[] = $source['bulan'];
+                    $vals[$key] = 0;
+                }
 
-            $vals[$key] += $source[$teknik];
+                $vals[$key] += $source[$teknik];
+            }
         }
 
         return $vals;
