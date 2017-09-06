@@ -42,6 +42,11 @@ class Prediksi extends \yii\base\Model {
         ];
     }
 
+    public function isPredictionYear() {
+
+        return $this->tahun === date('Y');
+    }
+
     public function checkYear($attribute, $params, $validator) {
         $year = intval(date('Y'));
         $firstYear = Penjualan::find()->orderBy(['tahun' => SORT_ASC])->one();
@@ -264,17 +269,17 @@ class Prediksi extends \yii\base\Model {
     }
 
     public function getMadAndMse() {
-        $teknik = Teknik::findOne(2);
+        $teknik = Teknik::find()->where(['id' => 2])->one();
         $prediction = $this->getPrediction();
         $lists = [];
-        $totalPenjualan = $this->countSales($this->getSources(), $teknik->kode, intval($this->tahun));
+        $totalPenjualan = $this->countSales($teknik->id, $this->tahun);
         $total = [];
         $included = ['error', 'errorKw', 'selisih'];
 
         foreach ($prediction as $month => $datas) {
             $penjualan = $totalPenjualan[$month];
             $forecase = $datas[$teknik->kode];
-            $error = round($penjualan - $forecase);
+            $error = abs(round($penjualan - $forecase));
 
             $tmp = [
                 'penjualan' => $penjualan,
@@ -349,24 +354,25 @@ class Prediksi extends \yii\base\Model {
         ];
     }
 
-    private function countSales($sources, $teknik, $year) {
-        $vals = [];
+    private function countSales($teknik, $year) {
+        $holder = [];
         $keys = [];
+        $groups = Penjualan::find()->select(['id_teknik', 'bulan', 'jumlah'])->where(['=', 'tahun', $year])->asArray()->all();
 
-        foreach ($sources as $source) {
-            $key = strtolower($source['bulan']);
+        foreach ($groups as $group) {
+            $key = $group['bulan'];
 
-            if ($source['tahun'] === $year) {
-                if (!in_array($source['bulan'], $keys)) {
-                    $keys[] = $source['bulan'];
-                    $vals[$key] = 0;
-                }
+            if (!in_array($group['bulan'], $keys)) {
+                $keys[] = $key;
+                $holder[strtolower($key)] = 0;
+            }
 
-                $vals[$key] += $source[$teknik];
+            if (intval($group['id_teknik']) === $teknik) {
+                $holder[strtolower($key)] += intval($group['jumlah']);
             }
         }
 
-        return $vals;
+        return $holder;
     }
 
 }
