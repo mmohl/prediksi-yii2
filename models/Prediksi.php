@@ -269,7 +269,7 @@ class Prediksi extends \yii\base\Model {
     }
 
     public function getMadAndMse() {
-        $teknik = Teknik::find()->where(['id' => 2])->one();
+        $teknik = Teknik::find()->where(['id' => 12])->one();
         $prediction = $this->getPrediction();
         $lists = [];
         $totalPenjualan = $this->countSales($teknik->id, $this->tahun);
@@ -280,13 +280,13 @@ class Prediksi extends \yii\base\Model {
             $penjualan = $totalPenjualan[$month];
             $forecase = $datas[$teknik->kode];
             $error = abs(round($penjualan - $forecase));
-
+			
             $tmp = [
                 'penjualan' => $penjualan,
                 'forecase' => $forecase,
                 'error' => $error,
                 'errorKw' => pow($error, 2),
-                'selisih' => round(($error / $penjualan) * 100)
+                'selisih' =>($error / $penjualan)
             ];
 
             $lists[$month] = $tmp;
@@ -358,7 +358,7 @@ class Prediksi extends \yii\base\Model {
         $holder = [];
         $keys = [];
         $groups = Penjualan::find()->select(['id_teknik', 'bulan', 'jumlah'])->where(['=', 'tahun', $year])->asArray()->all();
-
+		
         foreach ($groups as $group) {
             $key = $group['bulan'];
 
@@ -367,11 +367,12 @@ class Prediksi extends \yii\base\Model {
                 $holder[strtolower($key)] = 0;
             }
 
-            if (intval($group['id_teknik']) === $teknik) {
+            if ($group['id_teknik'] === $teknik) {
                 $holder[strtolower($key)] += intval($group['jumlah']);
             }
+			
         }
-
+		
         return $holder;
     }
 
