@@ -72,11 +72,10 @@ class Penjualan extends Model {
 
         $years = $tmp->asArray()->all();
 
-        // menambah tahun yang diprediksi secara manual dengan menambah 1 (satu) di tahun terakhir
-        // dari data penjualan.
-        $years[] = ['tahun' => intval($years[(count($years) - 1)]['tahun']) + 1];
-
         if ($dropdown) {
+            // menambah tahun yang diprediksi secara manual dengan menambah 1 (satu) di tahun terakhir
+            // dari data penjualan.
+            $years[] = ['tahun' => intval($years[(count($years) - 1)]['tahun']) + 1];
 
             $lists = [];
             foreach ($years as $year) {
@@ -87,7 +86,7 @@ class Penjualan extends Model {
         }
 
         return array_map(function($year) {
-            return $year['tahun'];
+            return intval($year['tahun']);
         }, $years);
     }
 

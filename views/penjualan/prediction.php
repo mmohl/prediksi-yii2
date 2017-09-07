@@ -20,7 +20,7 @@ if ($status) {
     $footers = $model->getFooters();
     $predictions = $model->getPrediction();
     $tekniks = \app\models\handlers\TeknikHandler::getChartFormat();
-    $datas = $model->getMadAndMse();
+    $datas = $model->isPredictionYear() ? null : $model->getMadAndMse();
 }
 ?>
 
@@ -101,27 +101,25 @@ if ($status) {
             </div>
         </div>
         <div class="content">
-            <?php Pjax::begin() ?>
-            <?= Html::beginForm(['/penjualan/prediksi-error'], 'GET', ['data-pjax' => true]) ?>
-            <div class="row">
-                <div class="col-lg-4">
-                    <div class="form-group">
-                        <label for="">Teknik</label>
-                        <div class="input-group">
-                            <?= Html::dropDownList('teknik', '', $tekniks, ['class' => 'form-control']) ?>
-                            <div class="input-group-btn">
-                                <button class="btn btn-default" type="submit" id="teknik-button">
-                                    <?= Yii::t('app', 'Pilih') ?>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <?= $this->render('_prediction', ['datas' => $datas]) ?>
-            <?= Html::endForm() ?>
-            <?php Pjax::end() ?>
+            <!--Data prediction for every year-->
+            <?= $this->render('_prediction', ['predictions' => $predictions]) ?>
         </div>
-
     </div>
+
+    <!--It will rendered if the year is not prediction year-->
+    <?php if (!$model->isPredictionYear()): ?>
+        <div class="card">
+            <div class="header">
+                <h3>Akurasi Penjualan di tahun <?= $model->tahun ?></h3>
+            </div>
+            <div class="content">
+                <?php Pjax::begin() ?>
+
+                <?= $this->render('_accuration', ['datas' => $datas, 'tekniks' => $tekniks]) ?>
+
+                <?php Pjax::end() ?>
+            </div>
+        </div>
+    <?php endif; ?>
+
 <?php endif; ?>
