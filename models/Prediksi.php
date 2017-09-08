@@ -281,12 +281,13 @@ class Prediksi extends \yii\base\Model {
             $forecase = $datas[$teknik->kode];
             $error = abs(round($penjualan - $forecase));
 			
+
             $tmp = [
                 'penjualan' => $penjualan,
                 'forecase' => $forecase,
                 'error' => $error,
                 'errorKw' => pow($error, 2),
-                'selisih' =>($error / $penjualan)
+                'selisih' =>round(($error / $penjualan)* 100)	
             ];
 
             $lists[$month] = $tmp;
