@@ -150,7 +150,7 @@ class Prediksi extends \yii\base\Model {
 
     private function group(array $collection) {
         $tmp = Teknik::find()->select(['id', 'kode'])->all();
-        // set first value of id teknik
+// set first value of id teknik
         $this->teknik = empty($this->teknik) ? $tmp[0]->id : $this->teknik;
         $years = Penjualan::getAllYears($this->tahun);
         $kodes = [];
@@ -256,7 +256,7 @@ class Prediksi extends \yii\base\Model {
         $liniers = $this->getLiniers();
         $next = $this->getNextYear();
 
-        // Jika prediksi sudah pernah dilakukan untuk tahun mendatang, maka ambil dari session.
+// Jika prediksi sudah pernah dilakukan untuk tahun mendatang, maka ambil dari session.
         if (Yii::$app->session->has(MySession::getOnePredictionKey()) && $this->tahun === date('Y')) {
             return Yii::$app->session->get(MySession::getOnePredictionKey());
         }
@@ -283,6 +283,7 @@ class Prediksi extends \yii\base\Model {
 
     public function getMadAndMse($teknikId = null) {
         $teknik = Teknik::find()->where(['id' => empty($teknikId) ? $this->teknik : $teknikId])->one();
+
         $prediction = $this->getPrediction();
         $lists = [];
         $totalPenjualan = $this->countSales($teknik->id, $this->tahun);
@@ -293,6 +294,7 @@ class Prediksi extends \yii\base\Model {
             $penjualan = $totalPenjualan[$month];
             $forecase = $datas[$teknik->kode];
             $error = abs(round($penjualan - $forecase));
+
 
             $tmp = [
                 'penjualan' => $penjualan,
@@ -380,7 +382,7 @@ class Prediksi extends \yii\base\Model {
                 $holder[strtolower($key)] = 0;
             }
 
-            if (intval($group['id_teknik']) === $teknik) {
+            if ($group['id_teknik'] == $teknik) {
                 $holder[strtolower($key)] += intval($group['jumlah']);
             }
         }
