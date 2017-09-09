@@ -5,19 +5,20 @@ use yii\bootstrap\Html;
 $no = 1;
 $this->registerCssFile('@web/css/penjualan/prediksi.custom.css');
 ?>
-<?= Html::beginForm(['/penjualan/prediksi-error'], 'GET', ['data-pjax' => true]) ?>
+<?= Html::beginForm(['/penjualan/prediction'], 'POST') ?>
 <div class="row">
     <div class="col-lg-4">
         <div class="form-group">
             <label for="">Teknik</label>
             <div class="input-group">
-                <?= Html::dropDownList('teknik', '', $tekniks, ['class' => 'form-control']) ?>
+                <?= Html::activeDropDownList($model, 'teknik', $tekniks, ['class' => 'form-control']) ?>
                 <div class="input-group-btn">
                     <button class="btn btn-default" type="submit" id="teknik-button">
                         <?= Yii::t('app', 'Pilih') ?>
                     </button>
                 </div>
             </div>
+            <?= Html::activeHiddenInput($model, 'tahun') ?>
         </div>
     </div>
 </div>
