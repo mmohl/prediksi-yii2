@@ -46,6 +46,9 @@ class PenjualanController extends \yii\web\Controller {
         $model = new Prediksi;
 
         if ($model->load(\Yii::$app->request->post()) && $model->validate()) {
+//            echo '<pre>';
+//            var_dump($model);
+//            die;
 
             $model->calculate();
 
