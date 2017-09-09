@@ -31,7 +31,7 @@ if ($status) {
             <div class="col-lg-6">
                 <div class="form-group">
                     <label for="total">Total Records</label>
-                    <?= Html::input('text', 'total', $status ? $allSales : 0, ['class' => 'form-control', 'readonly' => true]) ?>
+                    <?= Html::input('text', 'total', $status ? count($sources) : 0, ['class' => 'form-control', 'readonly' => true]) ?>
                 </div>
             </div>
             <div class="col-lg-6">
