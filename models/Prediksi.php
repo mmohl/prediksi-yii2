@@ -257,9 +257,9 @@ class Prediksi extends \yii\base\Model {
         $next = $this->getNextYear();
 
 // Jika prediksi sudah pernah dilakukan untuk tahun mendatang, maka ambil dari session.
-        if (Yii::$app->session->has(MySession::getOnePredictionKey()) && $this->tahun === date('Y')) {
-            return Yii::$app->session->get(MySession::getOnePredictionKey());
-        }
+//        if (Yii::$app->session->has(MySession::getOnePredictionKey()) && $this->tahun === date('Y')) {
+//            return Yii::$app->session->get(MySession::getOnePredictionKey());
+//        }
 
         /**
          * Menjumlahkan value tiap teknik
