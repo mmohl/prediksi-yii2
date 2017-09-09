@@ -227,8 +227,8 @@ class Prediksi extends \yii\base\Model {
 
     public function getLiniers() {
         $datas = [];
-        $total = count($this->getAllSales());
-//        $total = count($this->source);
+//        $total = $this->getAllSales();
+        $total = count($this->source);
         $footers = $this->getFooters();
         $kwadrat = $footers['x2'];
         $excludes = ['x2', 'x'];
