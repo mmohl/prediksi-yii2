@@ -21,6 +21,7 @@ if ($status) {
     $predictions = $model->getPrediction();
     $tekniks = \app\models\handlers\TeknikHandler::getChartFormat();
     $datas = $model->isPredictionYear() ? null : $model->getMadAndMse();
+    $allSales = $model->getAllSales();
 }
 ?>
 
@@ -30,7 +31,7 @@ if ($status) {
             <div class="col-lg-6">
                 <div class="form-group">
                     <label for="total">Total Records</label>
-                    <?= Html::input('text', 'total', empty($sources) ? 0 : count($sources), ['class' => 'form-control', 'readonly' => true]) ?>
+                    <?= Html::input('text', 'total', $status ? $allSales : 0, ['class' => 'form-control', 'readonly' => true]) ?>
                 </div>
             </div>
             <div class="col-lg-6">
@@ -113,11 +114,11 @@ if ($status) {
                 <h3>Akurasi Penjualan di tahun <?= $model->tahun ?></h3>
             </div>
             <div class="content">
-                <?php Pjax::begin() ?>
+                <?php //Pjax::begin() ?>
 
-                <?= $this->render('_accuration', ['datas' => $datas, 'tekniks' => $tekniks]) ?>
+                <?= $this->render('_accuration', ['datas' => $datas, 'tekniks' => $tekniks, 'model' => $model]) ?>
 
-                <?php Pjax::end() ?>
+                <?php //Pjax::end() ?>
             </div>
         </div>
     <?php endif; ?>
