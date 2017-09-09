@@ -23,6 +23,7 @@ class Prediksi extends \yii\base\Model {
     public $isYear = false;
     public $isOdd;
     public $teknik;
+    private $allSales;
     private $source;
     private $isCalculated = false;
 
@@ -31,7 +32,7 @@ class Prediksi extends \yii\base\Model {
             [['tahun'], 'required'],
             [['tahun'], 'number'],
             [['tahun'], 'checkYear', 'skipOnEmpty' => false, 'skipOnError' => false],
-            [['total'], 'safe']
+            [['total', 'teknik'], 'safe']
         ];
     }
 
@@ -68,9 +69,12 @@ class Prediksi extends \yii\base\Model {
     }
 
     public function calculate() {
+        $all = $this->getSource($this->tahun);
 
-        $source = $this->group($this->getSource($this->tahun));
+        $source = $this->group($all);
+
         $tmp = null;
+
         $this->isOdd = count($source) % 2 == 1 ? true : false;
 
         if ($this->isOdd) {
@@ -81,7 +85,13 @@ class Prediksi extends \yii\base\Model {
 
         $this->isCalculated = true;
 
+        $this->allSales = $all;
+
         $this->source = $this->countKwadrat($tmp);
+    }
+
+    public function getAllSales() {
+        return empty($this->allSales) ? 0 : count($this->allSales);
     }
 
     public function getSource($year) {
@@ -140,6 +150,8 @@ class Prediksi extends \yii\base\Model {
 
     private function group(array $collection) {
         $tmp = Teknik::find()->select(['id', 'kode'])->all();
+        // set first value of id teknik
+        $this->teknik = empty($this->teknik) ? $tmp[0]->id : $this->teknik;
         $years = Penjualan::getAllYears($this->tahun);
         $kodes = [];
         $months = Penjualan::getMonths();
@@ -215,7 +227,8 @@ class Prediksi extends \yii\base\Model {
 
     public function getLiniers() {
         $datas = [];
-        $total = count($this->source);
+        $total = count($this->getAllSales());
+//        $total = count($this->source);
         $footers = $this->getFooters();
         $kwadrat = $footers['x2'];
         $excludes = ['x2', 'x'];
@@ -268,8 +281,8 @@ class Prediksi extends \yii\base\Model {
         return $datas;
     }
 
-    public function getMadAndMse() {
-        $teknik = Teknik::find()->where(['id' => 2])->one();
+    public function getMadAndMse($teknikId = null) {
+        $teknik = Teknik::find()->where(['id' => empty($teknikId) ? $this->teknik : $teknikId])->one();
         $prediction = $this->getPrediction();
         $lists = [];
         $totalPenjualan = $this->countSales($teknik->id, $this->tahun);
@@ -286,7 +299,7 @@ class Prediksi extends \yii\base\Model {
                 'forecase' => $forecase,
                 'error' => $error,
                 'errorKw' => pow($error, 2),
-                'selisih' => round(($error / $penjualan) * 100)
+                'selisih' => round(($error / $penjualan) / 100)
             ];
 
             $lists[$month] = $tmp;
